@@ -7,32 +7,45 @@ import { fetchProducts } from './productSlice';
 import Link from 'next/link'; 
 import { addToCart, removeFromCart, decreaseQuantity, increaseQuantity } from '../cart/cartSlice';
 
-
-
 function PLPage() {
   const dispatch = useDispatch<AppDispatch>();
   const [showPopup, setShowPopup] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   
-
-
   const { items, loading, error } = useSelector((state: any) => state.products);
 
   useEffect(() => {
     dispatch(fetchProducts());
   }, [dispatch]);
 
+  // Filter products based on search term
+  const filteredProducts = items?.filter((product: any) => {
+    if (!searchTerm.trim()) return true; // Show all when search is empty
+    
+    const term = searchTerm.toLowerCase();
+    return (
+      product.name?.toLowerCase().includes(term) ||
+      product.description?.toLowerCase().includes(term) ||
+      product.category?.toLowerCase().includes(term) ||
+      product.price?.toString().includes(term)
+    );
+  });
+
   const handleAddToCart = (product: any) => {
     dispatch(addToCart(product));
-    
     console.log("Added to cart:", product);
-    // Show popup
     setShowPopup(true);
-    
     setTimeout(() => {
       setShowPopup(false);
-    }, 300);
+    }, 3000); // Increased to 3000ms for better visibility
+  };
 
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const clearSearch = () => {
+    setSearchTerm("");
   };
 
   return (
@@ -44,8 +57,18 @@ function PLPage() {
           <input
             type="text"
             placeholder="Search products..."
+            value={searchTerm}
+            onChange={handleSearch}
             className="flex-1 px-4 py-2 outline-none bg-transparent text-gray-700"
           />
+          {searchTerm && (
+            <button 
+              onClick={clearSearch}
+              className="text-gray-400 hover:text-gray-600 px-2"
+            >
+              ✕
+            </button>
+          )}
           <button className="bg-purple-500 hover:bg-purple-600 text-white px-4 py-2">
             Search
           </button>
@@ -61,7 +84,22 @@ function PLPage() {
 
       {/* Products Section */}
       <div className="p-6">
-        <h1 className='font-bold text-black text-3xl'>Shop Products</h1>
+        <div className="flex justify-between items-center mb-6">
+          <h1 className='font-bold text-black text-3xl'>Shop Products</h1>
+          
+          {/* Search Results Info */}
+          {searchTerm && (
+            <div className="text-gray-600">
+              {filteredProducts?.length > 0 ? (
+                <span>
+                  Found {filteredProducts.length} product{filteredProducts.length !== 1 ? 's' : ''} for "{searchTerm}"
+                </span>
+              ) : (
+                <span>No products found for "{searchTerm}"</span>
+              )}
+            </div>
+          )}
+        </div>
 
         {loading && <p className="text-gray-500 mt-4">Loading products...</p>}
         {error && <p className="text-red-500 mt-4">Error: {error}</p>}
@@ -71,30 +109,48 @@ function PLPage() {
         )}
 
         {!loading && !error && items?.length > 0 && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
-            {items.map((product: any) => (
-              <div key={product.id} className="bg-white p-4 rounded-lg shadow hover:shadow-lg flex flex-col">
-                <img
-                  src={product.image}
-                  alt={product.name}
-                  className="w-full h-40 object-cover rounded"
-                />
-                <h2 className="mt-2 font-semibold">{product.name}</h2>
-                <p className="text-gray-600 mt-1">${product.price}</p>
-                <button
-                  onClick={() => handleAddToCart(product)}
-                  className="mt-4 bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded"
+          <>
+            {/* Show message when no search results */}
+            {searchTerm && filteredProducts?.length === 0 && (
+              <div className="text-center py-8">
+                <p className="text-gray-500 text-lg">No products found matching "{searchTerm}"</p>
+                <button 
+                  onClick={clearSearch}
+                  className="mt-2 text-purple-600 hover:text-purple-800"
                 >
-                  Add to Cart
+                  Clear search
                 </button>
-                {/* Popup */}
-      {showPopup && (
-        <div className="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50">
-          ✅ Product added to cart!
-        </div>
-      )}
               </div>
-            ))}
+            )}
+
+            {/* Products Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
+              {(filteredProducts || items).map((product: any) => (
+                <div key={product.id} className="bg-white p-4 rounded-lg shadow hover:shadow-lg flex flex-col">
+                  <img
+                    src={product.image}
+                    alt={product.name}
+                    className="w-full h-40 object-cover rounded"
+                  />
+                  <h2 className="mt-2 font-semibold text-black">{product.title}</h2>
+
+                  <p className="text-gray-600 mt-1">${product.price}</p>
+                  <button
+                    onClick={() => handleAddToCart(product)}
+                    className="mt-4 bg-purple-500 hover:bg-purple-600 text-white px-4 py-2 rounded"
+                  >
+                    Add to Cart
+                  </button>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {/* Popup - Moved outside the grid to show once */}
+        {showPopup && (
+          <div className="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-bounce">
+            ✅ Product added to cart!
           </div>
         )}
       </div>
