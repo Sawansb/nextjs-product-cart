@@ -1,5 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { Product } from "../products/product.types";
+import { Product } from "./product.types";
+import productServices, { getProducts } from "./product_service";
+import { AxiosError } from "axios";
 
 interface ProductsState {
   items: Product[];
@@ -8,18 +10,22 @@ interface ProductsState {
 }
 
 const initialState: ProductsState = {
-  items: [],
+  items: [] as Product[],
   loading: false,
   error: null,
 };
 
-// 🔹 Async thunk to fetch products
-export const fetchProducts = createAsyncThunk<Product[]>(
-  "products/fetchProducts",
-  async () => {
-    const res = await fetch("https://fakestoreapi.com/products");
-    if (!res.ok) throw new Error("Failed to fetch products");
-    return await res.json();
+export const fetchProducts = createAsyncThunk(
+  "products",
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await productServices.getProducts();
+      return response.data; // this is what goes to fulfilled
+    } catch (error) {
+      const err = error as AxiosError;
+      console.error("Error fetching products:", err.message);
+      return rejectWithValue(err.response?.data || "Failed to fetch products");
+    }
   }
 );
 

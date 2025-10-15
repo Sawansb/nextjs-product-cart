@@ -25,7 +25,7 @@ axiosInstance.interceptors.response.use(
     if (response) {
       //perform the manipulation here and change the response object
     }
-    return response.data;
+    return response;
   },
   (error) => {
     if (error.response) {
