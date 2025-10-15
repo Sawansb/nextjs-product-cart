@@ -1,14 +1,18 @@
 "use client"; 
 
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch } from '../store/store';
 import { fetchProducts } from './productSlice';
 import Link from 'next/link'; 
 import { addToCart, removeFromCart, decreaseQuantity, increaseQuantity } from '../cart/cartSlice';
 
+
+
 function PLPage() {
   const dispatch = useDispatch<AppDispatch>();
+  const [showPopup, setShowPopup] = useState(false);
+
   const { items, loading, error } = useSelector((state: any) => state.products);
 
   useEffect(() => {
@@ -17,7 +21,15 @@ function PLPage() {
 
   const handleAddToCart = (product: any) => {
     dispatch(addToCart(product));
+    
     console.log("Added to cart:", product);
+    // Show popup
+    setShowPopup(true);
+    
+    setTimeout(() => {
+      setShowPopup(false);
+    }, 300);
+
   };
 
   return (
@@ -72,6 +84,12 @@ function PLPage() {
                 >
                   Add to Cart
                 </button>
+                {/* Popup */}
+      {showPopup && (
+        <div className="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50">
+          ✅ Product added to cart!
+        </div>
+      )}
               </div>
             ))}
           </div>
