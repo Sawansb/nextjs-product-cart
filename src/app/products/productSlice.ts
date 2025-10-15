@@ -20,7 +20,7 @@ export const fetchProducts = createAsyncThunk(
   async (_, { rejectWithValue }) => {
     try {
       const response = await productServices.getProducts();
-      return response.data; // this is what goes to fulfilled
+      return response.data; 
     } catch (error) {
       const err = error as AxiosError;
       console.error("Error fetching products:", err.message);

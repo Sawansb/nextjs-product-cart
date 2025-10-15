@@ -4,6 +4,8 @@ import React, { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch } from '../store/store';
 import { fetchProducts } from './productSlice';
+import Link from 'next/link'; 
+import { addToCart, removeFromCart, decreaseQuantity, increaseQuantity } from '../cart/cartSlice';
 
 function PLPage() {
   const dispatch = useDispatch<AppDispatch>();
@@ -14,14 +16,15 @@ function PLPage() {
   }, [dispatch]);
 
   const handleAddToCart = (product: any) => {
-    // You can dispatch an action to add to cart here
+    dispatch(addToCart(product));
     console.log("Added to cart:", product);
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Search Bar */}
-      <div className="bg-purple-600 py-4 px-6 flex shadow-sm">
+      {/* Top Bar: Search + View Cart */}
+      <div className="bg-purple-600 py-4 px-6 flex justify-between items-center shadow-sm">
+        {/* Search Bar */}
         <div className="flex items-center w-full max-w-md bg-white rounded-full shadow-sm overflow-hidden">
           <input
             type="text"
@@ -32,6 +35,13 @@ function PLPage() {
             Search
           </button>
         </div>
+
+        {/* View Cart Button */}
+        <Link href="/cart">
+          <button className="ml-4 bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded">
+            View Cart
+          </button>
+        </Link>
       </div>
 
       {/* Products Section */}

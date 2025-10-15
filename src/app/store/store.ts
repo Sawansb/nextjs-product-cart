@@ -3,7 +3,7 @@ import { config } from "process";
 import rootReducer from "./rootReducer";
 
 export const store = configureStore({
-    reducer: rootReducer
+    reducer: rootReducer,
 })
 
 export type AppDispatch = typeof store.dispatch;
