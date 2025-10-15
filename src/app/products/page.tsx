@@ -12,6 +12,9 @@ import { addToCart, removeFromCart, decreaseQuantity, increaseQuantity } from '.
 function PLPage() {
   const dispatch = useDispatch<AppDispatch>();
   const [showPopup, setShowPopup] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  
+
 
   const { items, loading, error } = useSelector((state: any) => state.products);
 
