@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch } from '../store/store';
 import { fetchProducts } from './productSlice';
 import Link from 'next/link'; 
-import { addToCart, removeFromCart, decreaseQuantity, increaseQuantity } from '../cart/cartSlice';
+import { addToCart } from '../cart/cartSlice';
 
 function PLPage() {
   const dispatch = useDispatch<AppDispatch>();
@@ -37,7 +37,7 @@ function PLPage() {
     setShowPopup(true);
     setTimeout(() => {
       setShowPopup(false);
-    }, 3000); // Increased to 3000ms for better visibility
+    }, 300); // Increased to 3000ms for better visibility
   };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -130,7 +130,7 @@ function PLPage() {
                   <img
                     src={product.image}
                     alt={product.name}
-                    className="w-full h-40 object-cover rounded"
+                    className="w-full h-40 object-contain rounded"
                   />
                   <h2 className="mt-2 font-semibold text-black">{product.title}</h2>
 
