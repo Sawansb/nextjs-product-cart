@@ -20,7 +20,7 @@ function PLPage() {
 
   // Filter products based on search term
   const filteredProducts = items?.filter((product: any) => {
-    if (!searchTerm.trim()) return true; // Show all when search is empty
+    if (!searchTerm.trim()) return true; 
     
     const term = searchTerm.toLowerCase();
     return (
@@ -37,7 +37,7 @@ function PLPage() {
     setShowPopup(true);
     setTimeout(() => {
       setShowPopup(false);
-    }, 300); // Increased to 3000ms for better visibility
+    }, 300); 
   };
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
